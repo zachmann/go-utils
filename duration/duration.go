@@ -168,7 +168,12 @@ type DurationOption time.Duration
 func (do *DurationOption) UnmarshalJSON(bytes []byte) error {
 	var s string
 	if err := json.Unmarshal(bytes, &s); err != nil {
-		return err
+		var i float64
+		if e := json.Unmarshal(bytes, &i); e != nil {
+			return err
+		}
+		*do = DurationOption(time.Duration(i * float64(time.Second)))
+		return nil
 	}
 	d, err := ParseDuration(s)
 	if err != nil {
@@ -191,21 +196,31 @@ func (do DurationOption) Duration() time.Duration {
 }
 
 // UnmarshalYAML implements the yaml.Unmarshaler interface
-func (do *DurationOption) UnmarshalYAML(value *yaml.Node) error {
-	if value.Kind != yaml.ScalarNode {
-		return fmt.Errorf("DurationOption must be a scalar, got kind=%d", value.Kind)
-	}
+func (do *DurationOption) UnmarshalYAML(n *yaml.Node) error {
+	switch n.Tag {
+	case "!!int", "!!float":
+		// Number → seconds
+		var f float64
+		if err := n.Decode(&f); err != nil {
+			return err
+		}
+		*do = DurationOption(time.Duration(f * float64(time.Second)))
+		return nil
 
-	var s string
-	if err := value.Decode(&s); err != nil {
-		return err
+	case "!!str", "":
+		// String → parse with ParseDuration
+		var s string
+		if err := n.Decode(&s); err != nil {
+			return err
+		}
+		d, err := ParseDuration(s)
+		if err != nil {
+			return err
+		}
+		*do = DurationOption(d)
+		return nil
 	}
-	d, err := ParseDuration(s)
-	if err != nil {
-		return err
-	}
-	*do = DurationOption(d)
-	return nil
+	return fmt.Errorf("DurationOption (yaml) must be a number (seconds) or a string, got tag=%s", n.Tag)
 }
 
 // MarshalYAML implements the yaml.Marshaler interface
