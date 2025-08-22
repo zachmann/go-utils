@@ -53,7 +53,7 @@ func ReadFileFromLocations(filename string, locations []string) ([]byte, string)
 		filep := filepath.Join(dir, filename)
 		log.WithField("filepath", filep).Debug("Try to read file")
 		data, err := ReadFile(filep)
-		if err != nil {
+		if err == nil {
 			return data, dir
 		}
 	}
