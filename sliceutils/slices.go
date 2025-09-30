@@ -44,3 +44,30 @@ func IsSubsetOf[T comparable](subset []T, of []T) bool {
 	}
 	return true
 }
+
+// Subsets returns all non-empty subsets (power set without empty set)
+// of the given slice. It preserves element order within subsets.
+// If the input slice is nil, it returns nil.
+func Subsets[T any](vs []T) [][]T {
+	if vs == nil {
+		return nil
+	}
+
+	// Build subsets without including the empty subset
+	result := make([][]T, 0)
+	for _, v := range vs {
+		n := len(result)
+		// Add the single-element subset
+		result = append(result, []T{v})
+		// Extend existing subsets with the new element
+		for i := 0; i < n; i++ {
+			subset := result[i]
+			ns := make([]T, len(subset)+1)
+			copy(ns, subset)
+			ns[len(subset)] = v
+			result = append(result, ns)
+		}
+	}
+
+	return result
+}
