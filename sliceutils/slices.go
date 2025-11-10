@@ -68,6 +68,28 @@ func Subsets[T any](vs []T) [][]T {
 			result = append(result, ns)
 		}
 	}
-
 	return result
+}
+
+// Subtract returns the elements of a that are not in b.
+func Subtract[E comparable](a, b []E) []E {
+	if len(a) == 0 {
+		return nil
+	}
+	if len(b) == 0 {
+		out := make([]E, len(a))
+		copy(out, a)
+		return out
+	}
+	banned := make(map[E]struct{}, len(b))
+	for _, v := range b {
+		banned[v] = struct{}{}
+	}
+	out := make([]E, 0, len(a))
+	for _, v := range a {
+		if _, ok := banned[v]; !ok {
+			out = append(out, v)
+		}
+	}
+	return out
 }
