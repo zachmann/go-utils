@@ -185,9 +185,7 @@ func (do *DurationOption) UnmarshalJSON(bytes []byte) error {
 
 // MarshalJSON implements the json.Marshaler interface
 func (do DurationOption) MarshalJSON() (b []byte, err error) {
-	ns := do.Duration().Nanoseconds()
-	str := fmt.Sprintf("%dns", ns)
-	return json.Marshal(str)
+	return json.Marshal(do.Duration().Seconds())
 }
 
 // Duration returns the time.Duration
