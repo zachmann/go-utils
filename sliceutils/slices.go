@@ -103,6 +103,9 @@ func EqualSets[T comparable](a, b []T) bool {
 // It checks that the slices are of the same length and that all elements in
 // b are contained in a. It could return the wrong result if elements are not unique
 func EqualSetsFunc[T any](a, b []T, stringer func(T) string) bool {
+	if len(a) == 0 && len(b) == 0 {
+		return true
+	}
 	if len(a) != len(b) {
 		return false
 	}
