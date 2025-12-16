@@ -93,3 +93,28 @@ func Subtract[E comparable](a, b []E) []E {
 	}
 	return out
 }
+
+// EqualSets checks if two slices contain the same elements
+func EqualSets[T comparable](a, b []T) bool {
+	return len(a) == len(b) && len(Subtract(a, b)) == 0
+}
+
+// EqualSetsFunc checks if two slices contain the same elements, it uses the given function to stringify the elements
+// It checks that the slices are of the same length and that all elements in
+// b are contained in a. It could return the wrong result if elements are not unique
+func EqualSetsFunc[T any](a, b []T, stringer func(T) string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	aSet := make(map[string]struct{}, len(a))
+	for _, aa := range a {
+		aSet[stringer(aa)] = struct{}{}
+	}
+	for _, bb := range b {
+		_, found := aSet[stringer(bb)]
+		if !found {
+			return false
+		}
+	}
+	return true
+}
