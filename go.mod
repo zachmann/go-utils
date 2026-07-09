@@ -4,7 +4,7 @@ go 1.25.8
 
 require (
 	github.com/fatih/structs v1.1.0
-	github.com/gofiber/fiber/v2 v2.52.11
+	github.com/gofiber/fiber/v2 v2.52.14
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.4
 	gopkg.in/yaml.v3 v3.0.1
